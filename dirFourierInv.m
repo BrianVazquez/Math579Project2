@@ -29,16 +29,17 @@ n = -N:1:N;
 for k = 1:theta_k
     for rn = 1:length(n)
         % Fix theta_k  for supp(Rf(t,w(theta))) subset of [-L,L]
-        temp_vec = (-n(rn)*pi/L)*t;
-        temp_S = S(:,k).*complex(cos(temp_vec),sin(temp_vec));
+        exponent = (-n(rn)*pi/L)*t;
+        temp_S = S(:,k).*complex(cos(exponent),sin(exponent));
         Rf_hat(rn,k) = (L/N)*sum(temp_S);
     end
 end
-
 % change of variable 
 
+test_f = ifft2(Rf_hat,'symmetric');
 
-f = Rf_hat;
+
+f = test_f;
 
 end
 

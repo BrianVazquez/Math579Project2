@@ -26,6 +26,17 @@ function [ f ] = filteredBackProj(S,theta,t,filter, B)
 N = length(t);
 f = zeros(size(S));
 
+%Step 1: Calculating phi_hat(rj)
+
+
+%Step 2: Filter step - Q_phi(f)(n*L/N,w_(theta))
+
+%Step 3: back-projection step 
+
+%Step 4: for (x_m,y_l) and theta_k, find n_klm in ZZ such that 
+%        n_klm*L/N <= <(x_m,y_l),w(theta_k)> < (1 + n_klm)*L/N
+
+
 
 end
 
