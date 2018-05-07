@@ -22,12 +22,24 @@ function [ f ] = filteredBackProj(S,theta,t,filter, B)
 % -----------------------------------------------------------------------
 
 %% Algorithm:
-
-N = length(t);
 f = zeros(size(S));
+N = (length(t) - 1)/2;
+L = t(end);
+[length_t, theta_k] = size(S);
 
+% Filter group:
+switch filter
+    case 'Ram-Lak'
+        A = @(r) apFun(r,B);
+    case 'Hanning'
+        A = @(r) (cos(pi*r/(2*B))^2).*apFun(r,B);
+    case 'Shepp-Logan'
+        A = @(r) abs(sinc(r.*L./(2.*N))).^3;
+    otherwise
+        disp('invalid filter input.'); return;
+end
 %Step 1: Calculating phi_hat(rj)
-
+phiHat = @(r) A(r)*abs(r);
 
 %Step 2: Filter step - Q_phi(f)(n*L/N,w_(theta))
 

@@ -23,7 +23,6 @@ function [ f ] = dirFourierInv(S,theta, t)
 N = (length(t) - 1)/2;
 L = t(end);
 [length_t, theta_k] = size(S);
-% f = zeros(length_t);
 Rf_hat = zeros(length_t,theta_k); % D.F.T of Rf/S
 n = -N:1:N;
 for k = 1:theta_k
@@ -36,7 +35,9 @@ for k = 1:theta_k
 end
 % change of variable 
 
-test_f = ifft2(Rf_hat,'symmetric');
+
+interpRf_hat = zeros(length_t);
+test_f = ifft2(interpRf_hat,'symmetric');
 
 
 f = test_f;
