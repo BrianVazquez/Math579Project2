@@ -22,7 +22,7 @@ function [ f ] = filteredBackProj(S,theta,t,filter, B)
 % -----------------------------------------------------------------------
 
 %% Algorithm:
-f = zeros(size(S));
+f = zeros(length(t));
 N = (length(t) - 1)/2;
 L = t(end);
 [length_t, theta_k] = size(S);
@@ -30,17 +30,16 @@ L = t(end);
 % Filter group:
 switch filter
     case 'Ram-Lak'
-        A = @(r) apFun(r,B);
+        A = @(r) @(r) apFun(r,B);
     case 'Hanning'
         A = @(r) (cos(pi*r/(2*B))^2).*apFun(r,B);
     case 'Shepp-Logan'
-        A = @(r) abs(sinc(r.*L./(2.*N))).^3;
+        A = @(r) abs(sinc(r*L/(2*N))).^3;
     otherwise
         disp('invalid filter input.'); return;
 end
-%Step 1: Calculating phi_hat(rj)
+%Step 1: Calculating phi_hat(rj) ---------------------------------
 phiHat = @(r) A(r)*abs(r);
-
 j = -N:1:N;
 rj = j*pi/L;
 rj_len = length(rj);
