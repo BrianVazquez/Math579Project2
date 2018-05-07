@@ -41,6 +41,15 @@ end
 %Step 1: Calculating phi_hat(rj)
 phiHat = @(r) A(r)*abs(r);
 
+j = -N:1:N;
+rj = j*pi/L;
+rj_len = length(rj);
+phiHatVec = zeros(rj_len,1);
+
+for i = 1:rj_len
+    phiHatVec(i) = phiHat(rj(i));
+end
+
 %Step 2: Filter step - Q_phi(f)(n*L/N,w_(theta))
 
 %Step 3: back-projection step 
