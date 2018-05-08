@@ -3,7 +3,5 @@ function [ value ] = apFun(r, B )
 %   Detailed explanation goes here
 value = ((-B <= r) && r <= B)*1;
 
-
-
 end
 

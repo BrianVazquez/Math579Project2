@@ -22,9 +22,11 @@ function [ f ] = dirFourierInv(S,theta, t)
 
 N = (length(t) - 1)/2;
 L = t(end);
+t = t(2:end);
+S = S(2:end,:);
 [length_t, theta_k] = size(S);
-Rf_hat = zeros(length_t,theta_k); % D.F.T of Rf/S
-n = -N:1:N;
+Rf_hat = zeros(length_t-1,theta_k); % D.F.T of Rf/S
+n = -N:1:N-1;
 for k = 1:theta_k
     for rn = 1:length(n)
         % Fix theta_k  for supp(Rf(t,w(theta))) subset of [-L,L]
@@ -33,11 +35,17 @@ for k = 1:theta_k
         Rf_hat(rn,k) = (L/N)*sum(temp_S);
     end
 end
-% change of variable 
+
+r_n = (pi/L).*(-N:1:N-1);
+grid = (pi/L).*(-N:1:N-1);
+[theta_kk, Rn] = meshgrid(theta,r_n);
+[xi,eta] = pol2cart(theta_kk, Rn);
+
+[x,y] = meshgrid(grid,grid);
 
 
-interpRf_hat = zeros(length_t);
-test_f = ifft2(interpRf_hat,'symmetric');
+interpRf_hat = griddata(xi,eta, Rf_hat, x,y,'linear');
+% test_f = ifft2(interpRf_hat);
 
 
 f = test_f;

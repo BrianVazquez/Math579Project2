@@ -30,7 +30,7 @@ L = t(end);
 % Filter group:
 switch filter
     case 'Ram-Lak'
-        A = @(r) @(r) apFun(r,B);
+        A = @(r) apFun(r,B);
     case 'Hanning'
         A = @(r) (cos(pi*r/(2*B))^2).*apFun(r,B);
     case 'Shepp-Logan'
@@ -40,7 +40,7 @@ switch filter
 end
 %Step 1: Calculating phi_hat(rj) ---------------------------------
 phiHat = @(r) A(r)*abs(r);
-j = -N:1:N;
+j = -N:1:N-1;
 rj = j*pi/L;
 rj_len = length(rj);
 phiHatVec = zeros(rj_len,1);
@@ -49,6 +49,10 @@ for i = 1:rj_len
     phiHatVec(i) = phiHat(rj(i));
 end
 
+
+
+figure
+plot(j,phiHatVec);
 %Step 2: Filter step - Q_phi(f)(n*L/N,w_(theta))
 
 %Step 3: back-projection step 
