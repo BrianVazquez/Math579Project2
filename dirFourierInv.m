@@ -26,26 +26,28 @@ t = t(2:end);
 S = S(2:end,:);
 [length_t, theta_k] = size(S);
 Rf_hat = zeros(length_t-1,theta_k); % D.F.T of Rf/S
-n = -N:1:N-1;
-for k = 1:theta_k
-    for rn = 1:length(n)
-        % Fix theta_k  for supp(Rf(t,w(theta))) subset of [-L,L]
-        exponent = (-n(rn)*pi/L)*t;
-        temp_S = S(:,k).*complex(cos(exponent),sin(exponent));
-        Rf_hat(rn,k) = (L/N)*sum(temp_S);
-    end
-end
-
+n = -N:1:N;
+% for k = 1:theta_k
+%     for rn = 1:length(n)
+%         % Fix theta_k  for supp(Rf(t,w(theta))) subset of [-L,L]
+%         exponent = (-n(rn)*pi/L)*t;
+%         temp_S = S(:,k).*complex(cos(exponent),sin(exponent));
+%         Rf_hat(rn,k) = (L/N)*sum(temp_S);
+%     end
+% end
+Rf_hat = 2*L*fftshift(fft(S,2*N,1),1);
 r_n = (pi/L).*(-N:1:N-1);
-grid = (pi/L).*(-N:1:N-1);
 [theta_kk, Rn] = meshgrid(theta,r_n);
 [xi,eta] = pol2cart(theta_kk, Rn);
 
-[x,y] = meshgrid(grid,grid);
+[x,y] = meshgrid(n,n);
 
+interpRf_hat = griddata(xi,eta, Rf_hat, x,y);
 
-interpRf_hat = griddata(xi,eta, Rf_hat, x,y,'linear');
-% test_f = ifft2(interpRf_hat);
+% imagesc(fliplr(real(interpRf_hat)));
+% colormap('gray');
+% temp_M = [interpRf_hat flipud(fliplr(interpRf_hat))];
+test_f = (1/(4*L^2))*ifft(interpRf_hat,2*N,1);
 
 
 f = test_f;
