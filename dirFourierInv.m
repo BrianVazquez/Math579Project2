@@ -25,16 +25,8 @@ L = t(end);
 t = t(1:end-1);
 S = S(1:end-1,:);
 [length_t, theta_k] = size(S);
-% Rf_hat = zeros(length_t-1,theta_k); % D.F.T of Rf/S
-n = (pi/L)*(-N:1:N-1);
-% for k = 1:theta_k
-%     for rn = 1:length(n)
-%         % Fix theta_k  for supp(Rf(t,w(theta))) subset of [-L,L]
-%         exponent = (-n(rn)*pi/L)*t;
-%         temp_S = S(:,k).*complex(cos(exponent),sin(exponent));
-%         Rf_hat(rn,k) = (L/N)*sum(temp_S);
-%     end
-% end
+n = (pi/L)*(-N:1:N);
+
 for i = 1:theta_k
     S(:,i) = fftshift(S(:,i));
 end
@@ -63,6 +55,7 @@ test_f = (1/(4*L^2))*ifft2(interpRf_hat,'symmetric');
 for i = 1:2*N
     test_f(:,i) = ifftshift(test_f(:,i));
 end
+
 
 f = test_f;
 

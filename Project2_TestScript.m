@@ -9,7 +9,7 @@ load('proj2ck.mat');
 % imagesc(flipud(A));
 % colormap('gray');
 f11 = dirFourierInv(S1,theta1,t1);
-f12 = backProj(S1,theta1,t1);
+% f12 = backProj(S1,theta1,t1);
 
 % fbp22 = filteredBackProj(S1,theta1,t1,'Ram-Lak',120*pi);
 % [fFBP1_h] = filteredBackProj(S1,theta1,t1,'Hanning',120*pi);
@@ -21,5 +21,5 @@ imagesc(fliplr(f11));
 colormap('gray');
 
 subplot(1,2,2)
-imagesc(fliplr(f12));
+imagesc(fliplr(fDFT1));
 colormap('gray');
