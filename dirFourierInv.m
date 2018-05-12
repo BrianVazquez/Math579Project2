@@ -34,6 +34,7 @@ Rf_hat = 2*L*fft(S);
 for i = 1:theta_k
     Rf_hat(:,i) = fftshift(Rf_hat(:,i));
 end
+
 r_n = (pi/L).*(-N:1:N-1);
 [theta_kk, Rn] = meshgrid(theta,r_n);
 [xi,eta] = pol2cart(theta_kk, Rn);
@@ -53,11 +54,13 @@ end
 test_f = (1/(4*L^2))*ifft2(interpRf_hat,'symmetric');
 
 for i = 1:2*N
-    test_f(:,i) = ifftshift(test_f(:,i));
+    test_f(i,:) = ifftshift(test_f(i,:)');
+end
+for i = 1:2*N
+    test_f(i,:) = fftshift(test_f(i,:));
 end
 
-
+test_f=fftshift(test_f);
 f = test_f;
 
 end
-
