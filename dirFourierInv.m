@@ -22,11 +22,11 @@ function [ f ] = dirFourierInv(S,theta, t)
 
 N = (length(t) - 1)/2;
 L = t(end);
-t = t(2:end);
-S = S(2:end,:);
+t = t(1:end-1);
+S = S(1:end-1,:);
 [length_t, theta_k] = size(S);
-Rf_hat = zeros(length_t-1,theta_k); % D.F.T of Rf/S
-n = -N:1:N;
+% Rf_hat = zeros(length_t-1,theta_k); % D.F.T of Rf/S
+n = (pi/L)*(-N:1:N-1);
 % for k = 1:theta_k
 %     for rn = 1:length(n)
 %         % Fix theta_k  for supp(Rf(t,w(theta))) subset of [-L,L]
@@ -35,7 +35,13 @@ n = -N:1:N;
 %         Rf_hat(rn,k) = (L/N)*sum(temp_S);
 %     end
 % end
-Rf_hat = 2*L*fftshift(fft(S,2*N,1),1);
+for i = 1:theta_k
+    S(:,i) = fftshift(S(:,i));
+end
+Rf_hat = 2*L*fft(S);
+for i = 1:theta_k
+    Rf_hat(:,i) = fftshift(Rf_hat(:,i));
+end
 r_n = (pi/L).*(-N:1:N-1);
 [theta_kk, Rn] = meshgrid(theta,r_n);
 [xi,eta] = pol2cart(theta_kk, Rn);
@@ -44,11 +50,19 @@ r_n = (pi/L).*(-N:1:N-1);
 
 interpRf_hat = griddata(xi,eta, Rf_hat, x,y);
 
-% imagesc(fliplr(real(interpRf_hat)));
-% colormap('gray');
-% temp_M = [interpRf_hat flipud(fliplr(interpRf_hat))];
-test_f = (1/(4*L^2))*ifft(interpRf_hat,2*N,1);
+% Apply symmetry
+interpRf_hat(isnan(interpRf_hat)) = 0;
+interpRf_hat = fftRealSymmetry(interpRf_hat,N);
 
+for i = 1:2*N
+    interpRf_hat(:,i) = ifftshift(interpRf_hat(:,i));
+end
+
+test_f = (1/(4*L^2))*ifft2(interpRf_hat,'symmetric');
+
+for i = 1:2*N
+    test_f(:,i) = ifftshift(test_f(:,i));
+end
 
 f = test_f;
 
