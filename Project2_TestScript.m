@@ -17,10 +17,6 @@ N3 = (length(t3) - 1)/2;
 N4 = (length(t4) - 1)/2;
 N5 = (length(t5) - 1)/2;
 
-% fb11 = filteredBackProj(S1,theta1,t1,'Ram-Lak',120*pi);
-% [fFBP1_h] = filteredBackProj(S1,theta1,t1,'Hanning',120*pi);
-% [fFBP1_s] = filteredBackProj(S1,theta1,t1,'Shepp-Logan',120*pi);
-% 
 x1 = -N1:1:N1;
 y1 = x1;
 x2 = -N2:1:N2;
