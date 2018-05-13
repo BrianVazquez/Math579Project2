@@ -28,10 +28,10 @@ function [ f ] = filteredBackProj(S,theta,t,filter, B)
 L=abs(t(1));
 M= length(theta);
 length_t = length(t); 
-t = t(1:end-1);
+t1 = t(1:end-1);
 N=(length_t-1)/2;
 f = zeros(length_t,length_t);
-S = S(1:end-1,:);
+S1 = S(1:end-1,:);
 %-----Calculate phi_hat(r_j_ for j=-N,...,N-1 where r_j = j*pi/L---------
 
 switch filter
@@ -47,7 +47,6 @@ switch filter
 end
 
 phiHat = @(r) A(r)*abs(r);
-
 j = -N:1:N-1;
 rj = j*pi/L;
 rj_len = length(rj);
@@ -58,21 +57,21 @@ for i = 1:rj_len
 end
 
 %=============================Filter step=================================
-% for i = 1:M
-%     S(:,i) = fftshift(S(:,i));
-% end
-
-Rf_hat = fftshift(2*L*fft(fftshift(S)));
 for i = 1:M
-    Rf_hat(:,i) = Rf_hat(:,i).*phiHatVec;
+    S1(:,i) = fftshift(S1(:,i));
 end
 
-% temp_M = Rf_hat.*phiHatVec;
+Rf_hat = 2*L*fft(S1);
+for i = 1:M
+    Rf_hat(:,i) = fftshift(Rf_hat(:,i));
+end
+
+Rf_hat = Rf_hat.*phiHatVec;
 
 temp_M = fftshift(Rf_hat);
 F = 2*L*ifft(temp_M, 'symmetric');
 F = ifftshift(F);
-f = backProj(F,theta,t);
+f = backProj([F; S(end,:)],theta,t);
 
 %-----------------------------Get Rf_hat----------------------------------
 % Rf_hat=zeros(length_t-1,M);
@@ -88,13 +87,6 @@ f = backProj(F,theta,t);
 %     end
 % end
 
-% for i = 1:M
-%     S(:,i) = fftshift(S(:,i));
-% end
-% Rf_hat = 2*L*fft(S);
-% for i = 1:M
-%     Rf_hat(:,i) = fftshift(Rf_hat(:,i));
-% end
 %----------------------------Get Qf matrix--------------------------------
 % RfQ=zeros(length_t-1,M);
 % for i = 1:M
