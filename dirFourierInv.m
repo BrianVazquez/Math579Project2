@@ -54,7 +54,7 @@ end
 test_f = (1/(4*L^2))*ifft2(interpRf_hat,'symmetric');
 
 for i = 1:2*N
-    test_f(i,:) = ifftshift(test_f(i,:)');
+    test_f(i,:) = ifftshift(test_f(i,:));
 end
 for i = 1:2*N
     test_f(i,:) = fftshift(test_f(i,:));

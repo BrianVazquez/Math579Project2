@@ -62,7 +62,6 @@ for i = 1:r
             A1(i,j) = complex(realPart,imaginaryPart);
             A2(i,j) = complex(realPart,-imaginaryPart);
         end
-        
     end
 end
 

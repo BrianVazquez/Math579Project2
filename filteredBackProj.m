@@ -27,9 +27,11 @@ function [ f ] = filteredBackProj(S,theta,t,filter, B)
 % Algorithm:
 L=abs(t(1));
 M= length(theta);
-T = length(t); 
-N=(T-1)/2;
-f = zeros(T,T);
+length_t = length(t); 
+t = t(1:end-1);
+N=(length_t-1)/2;
+f = zeros(length_t,length_t);
+S = S(1:end-1,:);
 %-----Calculate phi_hat(r_j_ for j=-N,...,N-1 where r_j = j*pi/L---------
 
 switch filter
@@ -56,21 +58,35 @@ for i = 1:rj_len
 end
 
 %=============================Filter step=================================
+% for i = 1:M
+%     S(:,i) = fftshift(S(:,i));
+% end
 
-%-----------------------------Get Rf_hat----------------------------------
-Rf_hat=zeros(T-1,M);
-
-for col=1:M
-    Rfvec=S(1:T-1,col);
-    for k=0:2*N-1
-        sum = 0;
-        for j= 0:T-2
-            sum=sum+ Rfvec(j+1)*exp((-2i*pi*j*k)/(2*N));
-        end
-        Rf_hat(k+1,col)=sum/(2*N);
-    end
+Rf_hat = fftshift(2*L*fft(fftshift(S)));
+for i = 1:M
+    Rf_hat(:,i) = Rf_hat(:,i).*phiHatVec;
 end
 
+% temp_M = Rf_hat.*phiHatVec;
+
+temp_M = fftshift(Rf_hat);
+F = 2*L*ifft(temp_M, 'symmetric');
+F = ifftshift(F);
+f = backProj(F,theta,t);
+
+%-----------------------------Get Rf_hat----------------------------------
+% Rf_hat=zeros(length_t-1,M);
+% 
+% for col=1:M
+%     Rfvec=S(1:length_t-1,col);
+%     for k=0:2*N-1
+%         sum = 0;
+%         for j= 0:length_t-2
+%             sum=sum+ Rfvec(j+1)*exp((-2i*pi*j*k)/(2*N));
+%         end
+%         Rf_hat(k+1,col)=sum/(2*N);
+%     end
+% end
 
 % for i = 1:M
 %     S(:,i) = fftshift(S(:,i));
@@ -80,78 +96,80 @@ end
 %     Rf_hat(:,i) = fftshift(Rf_hat(:,i));
 % end
 %----------------------------Get Qf matrix--------------------------------
-RfQ=zeros(T-1,M);
-for i = 1:M
-    RfQ(:,i)= Rf_hat(:,i).*phiHatVec;
-end
-
-Qf=zeros(2*N,M);
-
-for col = 1:M
-    RfQ_vec=RfQ(:,col);
-    for j= 0:2*N-1
-        sum = 0;
-        for k=0:2*N-1
-            sum = sum + RfQ_vec(k+1)*exp(2i*j*k*pi/(2*N));
-        end
-        Qf(j+1,col)=2*L*sum;
-    end
-end
-Qf=real(Qf);
-%===========================Backprojection Step===========================
-% for row = 1:2*N+1
-%     for col= 1:2*N+1
-%         sum=0;
-%         xm=col-N-1; Xm=xm*L/N;
-%         yl=row-N-1; Yl=yl*L/N;
-%         tvec=[Xm,Yl];
-%         for k=1:M
-%             wvec=[cos(theta(k)),sin(theta(k))];
-%             
-%             n=ceil((-N-1+row)*cos(theta(k))) ;
-%             
-%             nk=dot(tvec,wvec)*N/L;
-%             
-%             beta=-n +nk;
-%             
-%             if n==N
-%                 sum=sum + beta*Qf(2*N,k)+ (1-beta)*Qf(2*N-1,k);
-%             elseif n==-N
-%                 sum=sum + beta*Qf(2,k) + (1-beta)*Qf(1,k);
-%             elseif n<N
-%                 sum = sum + beta*Qf(n+N+1,k)+(1-beta)*Qf(n+N,k);
-%             end
-%             
-%         end
-%       
-%         f(col,row)=sum/(2*M);
-%     end
-%     
+% RfQ=zeros(length_t-1,M);
+% for i = 1:M
+%     RfQ(:,i)= Rf_hat(:,i).*phiHatVec;
 % end
-
-for m=-N:N
-    for l=-N:N
-        xVec=[m*L/N, l*L/N];
-        
-        sum = 0;
-        
-        for k=0:M-1
-            wVec=[cos(theta(k+1)),sin(theta(k+1))];
-            tvalue=dot(xVec,wVec);
-            
-            n=ceil(tvalue*(N/L)-1);
-            
-            beta = -n +tvalue*N/L;
-            if n >= N
-                sum = sum + beta*Qf(2*N,k+1) + (1-beta)*Qf(2*N-1,k+1);
-            elseif n<= - N
-                sum = sum + beta*Qf(2,k+1) + (1-beta)*Qf(1,k+1);
-            elseif abs(n)<N
-                sum = sum + beta*Qf(n+N+1,k+1) + (1-beta)*Qf(n+N,k+1);
-            end
-        end
-        f(l+N+1,m+N+1)=sum/(2*M);
-    end
-end
+% 
+% Qf=zeros(2*N,M);
+% 
+% for col = 1:M
+%     RfQ_vec=RfQ(:,col);
+%     for j= 0:2*N-1
+%         sum = 0;
+%         for k=0:2*N-1
+%             sum = sum + RfQ_vec(k+1)*exp(2i*j*k*pi/(2*N));
+%         end
+%         Qf(j+1,col)=2*L*sum;
+%     end
+% end
+% Qf=real(Qf);
+% %===========================Backprojection Step===========================
+% % for row = 1:2*N+1
+% %     for col= 1:2*N+1
+% %         sum=0;
+% %         xm=col-N-1; Xm=xm*L/N;
+% %         yl=row-N-1; Yl=yl*L/N;
+% %         tvec=[Xm,Yl];
+% %         for k=1:M
+% %             wvec=[cos(theta(k)),sin(theta(k))];
+% %             
+% %             n=ceil((-N-1+row)*cos(theta(k))) ;
+% %             
+% %             nk=dot(tvec,wvec)*N/L;
+% %             
+% %             beta=-n +nk;
+% %             
+% %             if n==N
+% %                 sum=sum + beta*Qf(2*N,k)+ (1-beta)*Qf(2*N-1,k);
+% %             elseif n==-N
+% %                 sum=sum + beta*Qf(2,k) + (1-beta)*Qf(1,k);
+% %             elseif n<N
+% %                 sum = sum + beta*Qf(n+N+1,k)+(1-beta)*Qf(n+N,k);
+% %             end
+% %             
+% %         end
+% %       
+% %         f(col,row)=sum/(2*M);
+% %     end
+% %     
+% % end
+% 
+% for m=-N:N
+%     for l=-N:N
+%         xVec=[m*L/N, l*L/N];
+%         
+%         sum = 0;
+%         
+%         for k=0:M-1
+%             wVec=[cos(theta(k+1)),sin(theta(k+1))];
+%             tvalue=dot(xVec,wVec);
+%             
+%             n=ceil(tvalue*(N/L)-1);
+%             
+%             beta = -n +tvalue*N/L;
+%             if n >= N
+%                 sum = sum + beta*Qf(2*N,k+1) + (1-beta)*Qf(2*N-1,k+1);
+%             elseif n<= - N
+%                 sum = sum + beta*Qf(2,k+1) + (1-beta)*Qf(1,k+1);
+%             elseif abs(n)<N
+%                 sum = sum + beta*Qf(n+N+1,k+1) + (1-beta)*Qf(n+N,k+1);
+%             end
+%         end
+%         f(l+N+1,m+N+1)=sum/(2*M);
+%     end
+% end
+% 
+% % f = backProj(f,theta,t);
 
 end
