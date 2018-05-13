@@ -8,7 +8,35 @@ if(row ~= col)
 end
 
 
-A1 = A(:,1:N);
+A1 = A(:,1:N-1);
+
+A_mid = A(:,N);
+mid = floor(col/2);
+A_mid1 = A_mid(1:mid-1);
+A_mid2 = A_mid((mid+1):end);
+A_mid2 = flipud(A_mid2);
+
+for i = 1:length(A_mid1)
+    rel1 = real(A_mid1(i));
+    im1 = imag(A_mid1(i));
+    rel2 = real(A_mid2(i));
+    im2 = imag(A_mid2(i));
+    
+    realComponent = (rel1 + rel2)/2;
+    imaginaryComponent = (abs(im1) + abs(im2))/2;
+    
+    if(im1 < 0)
+        A_mid1(i) = complex(realComponent,-imaginaryComponent);
+        A_mid2(i) = complex(realComponent, imaginaryComponent);
+    else
+        A_mid1(i) = complex(realComponent,imaginaryComponent);
+        A_mid2(i) = complex(realComponent, -imaginaryComponent);
+    end
+end
+
+A_mid2 = flipud(A_mid2);
+A_mid = [A_mid1; A_mid(length(A_mid1)+1); A_mid2(end:-1:1)];
+
 A2 = A(:,(N+1):end);
 A2 = rot90(A2,2);
 
@@ -38,7 +66,7 @@ for i = 1:r
     end
 end
 
-B = [rot90(A2,2) A1];
+B = [rot90(A2,2) A_mid A1];
 
 end
 

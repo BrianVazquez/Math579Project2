@@ -25,7 +25,7 @@ L = t(end);
 t = t(1:end-1);
 S = S(1:end-1,:);
 [length_t, theta_k] = size(S);
-n = (pi/L)*(-N:1:N);
+n = (pi/L).*(-N:1:N);
 
 for i = 1:theta_k
     S(:,i) = fftshift(S(:,i));
