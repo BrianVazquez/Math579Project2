@@ -40,7 +40,6 @@ r_n = (pi/L).*(-N:1:N-1);
 [xi,eta] = pol2cart(theta_kk, Rn);
 
 [x,y] = meshgrid(n,n);
-
 interpRf_hat = griddata(xi,eta, Rf_hat, x,y);
 
 % Apply symmetry
@@ -52,13 +51,6 @@ for i = 1:2*N
 end
 
 test_f = (1/(4*L^2))*ifft2(interpRf_hat,'symmetric');
-
-for i = 1:2*N
-    test_f(i,:) = ifftshift(test_f(i,:));
-end
-for i = 1:2*N
-    test_f(i,:) = fftshift(test_f(i,:));
-end
 
 test_f=fftshift(test_f);
 f = test_f;
