@@ -1,29 +1,40 @@
-function [ A ] = backProj(S, theta, t)
-%backProj Summary of this function goes here
+function [ A ] = backProj( S, theta, t )
+M = length(t);
+N = length(theta);
+A=zeros(M,M);
+dt=t(2)-t(1);
 
-N = length(t);
-A = zeros(N,N);
+for i=1:M
+    for j=1:M
+        sum=0;
+        for k=1:N
+            t_k = t(i)*sin(theta(k))+t(j)*cos(theta(k));
+            ind=find(t==t_k);
+            if isempty(ind)==0
+                Svalue = S(ind,k);
+            elseif t_k <=t(1)
 
-w = [cos(theta) sin(theta)];
+                 Svalue= 0;
+            elseif t_k>t(M)
+                Svalue=0;
 
-for row = 1:N
-    for col = 1:N
-        sum = 0;
-        for j = 1:length(theta)
-            tj = t(col)*w(j,1) + t(row)*w(j,2);
-            index = find(tj < t,1);
-            if(index == 1)
-                sum = sum + S(index,j);
-            elseif((isempty(index) == 1))
-                sum = sum + S(end,j);
             else
-                alpha = (tj - t(index - 1))/(t(index) - t(index - 1));
-                sum = sum + alpha*S(index,j) + (1-alpha)*S(index-1,j);
+                lower=find(t <=t_k);
+                k1=lower(end);
+                
+                upper=find(t>=t_k);
+                k2=upper(1);
+                
+                alpha=(t_k - t(k1))/(t(k2)-t(k1));
+                Svalue = alpha*S(k2,k)+(1-alpha)*S(k1,k);
+                
             end
+          
+            sum=sum+Svalue;
         end
-        A(row,col) = sum/N;
+
+        A(i,j)=sum/N;
     end
 end
 
 end
-

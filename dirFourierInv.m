@@ -30,7 +30,7 @@ n = (pi/L).*(-N:1:N);
 for i = 1:theta_k
     S(:,i) = fftshift(S(:,i));
 end
-Rf_hat = 2*L*fft(S);
+Rf_hat = 4*L*N*fft(S);
 for i = 1:theta_k
     Rf_hat(:,i) = fftshift(Rf_hat(:,i));
 end
@@ -50,7 +50,7 @@ for i = 1:2*N
     interpRf_hat(:,i) = ifftshift(interpRf_hat(:,i));
 end
 
-test_f = (1/(4*L^2))*ifft2(interpRf_hat,'symmetric');
+test_f = (1/(2*L)^2)*ifft2(interpRf_hat,'symmetric');
 
 test_f=fftshift(test_f);
 f = test_f;

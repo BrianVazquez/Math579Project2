@@ -60,16 +60,17 @@ for i = 1:M
     S1(:,i) = fftshift(S1(:,i));
 end
 
-Rf_hat = 2*L*fft(S1);
+Rf_hat = (1/(2*N))*fft(S1);
 for i = 1:M
     Rf_hat(:,i) = fftshift(Rf_hat(:,i));
+    Rf_hat(:,i) = Rf_hat(:,i).*phiHatVec;
 end
 
 %=============================Filter step============================
-Rf_hat = Rf_hat.*phiHatVec;
+
 
 temp_M = fftshift(Rf_hat);
-F = 2*L*ifft(temp_M, 'symmetric');
+F = (N)*ifft(temp_M, 'symmetric');
 F = ifftshift(F);
 
 % --------------- Back Projection Step -------------------------------
