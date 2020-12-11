@@ -10,7 +10,7 @@ function [ f ] = dirFourierInv(S,theta, t)
 % theta: and Nx1 column vector that stores the angles along which the
 %        measurements are performed.
 
-% t: an Mx1 colum vectorthat stores the evenly spaced signed distances of
+% t: an Mx1 colum vector that stores the evenly spaced signed distances of
 %    the lines that measurements are perfomred. t = [-tmax:dt:tmax]
 
 % Output: 
